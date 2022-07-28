@@ -3,7 +3,10 @@ import {
   parseFile,
   getAllIntervals,
   getEarliestInterval,
-  getLatestInterval
+  getLatestInterval,
+  getOverlappingIntervals,
+  mergeOverlappingIntervals,
+  formatIntervalsToString
 } from "./helpers";
 
 export interface Interval {
@@ -43,7 +46,20 @@ export async function solveThirdQuestion(
   inputFilePath: string
 ): Promise<string[]> {
   // TODO: Solve me!
+  const workerList = parseFile(inputFilePath);
+  const allIntervals = getAllIntervals(workerList);
 
-  
-  return [];
+  const overlaps: Interval[] = [];
+  for (let i = 0; i < allIntervals.length; i++) {
+    for(let j = i + 1; j < allIntervals.length; j++) {
+       const overlapResult = getOverlappingIntervals(allIntervals[i], allIntervals[j]);
+       if (overlapResult != null) {
+        overlaps.push(overlapResult);
+       }
+    }
+ }
+
+  const results = mergeOverlappingIntervals(overlaps);
+  const formattedInterval = results.map((interval) => formatIntervalsToString(interval))
+  return formattedInterval;
 }
